@@ -28,7 +28,7 @@ def run_cmd(cmd):
 
 def sim():
 	build_dir()
-	run_cmd(["iverilog.exe", "-g2023", "-o", str(SIM_BIN)] + glob.glob(SRCS) + glob.glob(TESTS))
+	run_cmd(["iverilog.exe", "-g2023", "-I", "./include", "-o", str(SIM_BIN)] + glob.glob(SRCS) + glob.glob(TESTS))
 	run_cmd(["vvp", str(SIM_BIN)])
 
 def wave():
@@ -46,7 +46,7 @@ def synth():
 	json_path = str(JSON).replace("\\", "/")
 
 	ys_content = [
-		f"read_verilog -sv {" ".join(src_files)}",
+		f"read_verilog -I include -sv {" ".join(src_files)}",
 		"hierarchy -top rv32i",
 		"synth_ice40 -noabc",
 		f"write_json {json_path}"
