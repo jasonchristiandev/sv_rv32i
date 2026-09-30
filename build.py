@@ -28,7 +28,7 @@ def run_cmd(cmd):
 
 def sim():
 	build_dir()
-	run_cmd(["iverilog.exe", "-g2023", "-I", "./include", "-o", str(SIM_BIN)] + glob.glob(SRCS) + glob.glob(TESTS))
+	run_cmd(["iverilog", "-g2012", "-I", "./include", "-o", str(SIM_BIN)] + glob.glob(SRCS) + glob.glob(TESTS))
 	run_cmd(["vvp", str(SIM_BIN)])
 
 def wave():
@@ -41,7 +41,7 @@ def wave():
 
 def synth():
 	build_dir()
-	
+
 	src_files = [f.replace("\\", "/") for f in glob.glob(SRCS)]
 	json_path = str(JSON).replace("\\", "/")
 
