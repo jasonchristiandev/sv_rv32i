@@ -1,3 +1,6 @@
+`ifndef __ALU_SVH
+`define __ALU_SVH
+
 typedef enum logic [4:0] {
     ADD  = 5'd0,
     SUB  = 5'd1,
@@ -10,3 +13,6 @@ typedef enum logic [4:0] {
     SLT  = 5'd8,
     SLTU = 5'd9
 } alu_op_t;
+
+`endif
+
