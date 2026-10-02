@@ -2,10 +2,9 @@
 `timescale 1ns / 1ps
 
 module rv32i (
-    input  logic x,
-    output logic y
+    input logic clk,
+    input logic rst_n
 );
 
-    assign y = !x;
 
 endmodule
