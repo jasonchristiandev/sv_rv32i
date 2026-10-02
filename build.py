@@ -48,7 +48,7 @@ def synth():
 	ys_content = [
 		f"read_verilog -I include -sv {" ".join(src_files)}",
 		"hierarchy -top rv32i",
-		"synth_ice40 -noabc",
+		"synth_ice40",
 		f"write_json {json_path}"
 	]
 	YS_SCRIPT.write_text("\n".join(ys_content))
