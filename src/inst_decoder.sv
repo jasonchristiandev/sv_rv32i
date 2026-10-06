@@ -4,19 +4,23 @@ module inst_decoder (
     input logic clk,
     input logic rst_n,
     input logic [31:0] inst,
-    output alu_op_t alu_op
+    output logic exception,
+    output alu_op_t alu_op,
+    output logic [4:0] rd,
+    output logic [4:0] rs1,
+    output logic [4:0] rs2
 );
 
     always_ff @(posedge clk or negedge rst_n) begin
         logic [6:0] opcode;
-        logic [4:0] rd;
         logic [2:0] funct3;
-        logic [4:0] rs1;
-        logic [4:0] rs2;
         logic [6:0] funct7;
 
         if (!rst_n) begin
             alu_op = ADD;
+            rd = 0;
+            rs1 = 0;
+            rs2 = 0;
         end else begin
             opcode = inst[6:0];
             rd = inst[11:7];
@@ -27,7 +31,24 @@ module inst_decoder (
 
             case (opcode)
                 7'b0110011: begin  // R
-
+                    exception = funct7 != 7'h00;
+                    case (funct3)
+                        3'h0: begin
+                            alu_op = funct7 == 7'h20 ? SUB : ADD;
+                            exception &= (funct7 != 7'h20);
+                        end
+                        3'h4: alu_op = XOR;
+                        3'h6: alu_op = OR;
+                        3'h7: alu_op = AND;
+                        3'h1: alu_op = SLL;
+                        3'h5: begin
+                            alu_op = funct7 == 7'h20 ? SRA : SRL;
+                            exception &= (funct7 != 7'h20);
+                        end
+                        3'h2: alu_op = SLT;
+                        3'h3: alu_op = SLTU;
+                        default: exception = 1;
+                    endcase
                 end
                 7'b0010011, 7'b0000011, 7'b1100111, 7'b1110011: begin  // I
 
