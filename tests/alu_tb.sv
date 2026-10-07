@@ -32,7 +32,7 @@ module alu_tb;
 
     initial begin
 
-        $dumpfile("build/wave.vcd");
+        $dumpfile("build/alu_tb.vcd");
         $dumpvars(0, alu_tb);
 
         // ADD / SUB
