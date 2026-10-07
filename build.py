@@ -27,16 +27,11 @@ def run_cmd(cmd):
 
 def sim():
 	build_dir()
-	run_cmd(["iverilog", "-g2012", "-I", "./include", "-o", str(SIM_BIN)] + glob.glob(SRCS) + glob.glob(TESTS))
+	run_cmd(["iverilog", "-g2012", "-s", "master_tb", "-I", "./include", "-o", str(SIM_BIN)] + glob.glob(SRCS) + glob.glob(TESTS))
 	run_cmd(["vvp", str(SIM_BIN)])
 
-def wave(tb_name=None):
-	if tb_name:
-		vcd_name = f"{tb_name}.vcd"
-	else:
-		vcd_name = "wave.vcd"
-	
-	vcd_file = BUILD_DIR / vcd_name
+def wave():
+	vcd_file = BUILD_DIR / "wave.vcd"
 
 	if not vcd_file.exists():
 		sim()
@@ -107,13 +102,6 @@ if __name__ == "__main__":
 			print(f"{sys.argv[0]}: unknown target '{args[i]}'")
 			sys.exit(1)
 
-		if arg == "--wave":
-			tb_name = None
-			if i + 1 < len(args) and not args[i + 1].startswith("--"):
-				tb_name = args[i + 1]
-				i += 1
-			wave(tb_name)
-		else:
-			TARGETS[arg]()
+		TARGETS[arg]()
 
 		i += 1
