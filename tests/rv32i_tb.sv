@@ -14,7 +14,7 @@ module rv32i_tb;
 
     initial begin
 
-        $dumpfile("build/wave.vcd");
+        $dumpfile("build/rv32i_tb.vcd");
         $dumpvars(0, rv32i_tb);
 
         clk = 0;
