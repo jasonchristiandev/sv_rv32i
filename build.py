@@ -10,7 +10,6 @@ PCF = "pins.pcf"
 
 BUILD_DIR = Path("build")
 SIM_BIN = BUILD_DIR / "sim.out"
-VCD_FILE = BUILD_DIR / "wave.vcd"
 JSON = BUILD_DIR / "main.json"
 ASC = BUILD_DIR / "routed.asc"
 ROUTED_JSON = BUILD_DIR / "routed.json"
@@ -31,13 +30,20 @@ def sim():
 	run_cmd(["iverilog", "-g2012", "-I", "./include", "-o", str(SIM_BIN)] + glob.glob(SRCS) + glob.glob(TESTS))
 	run_cmd(["vvp", str(SIM_BIN)])
 
-def wave():
-	if not VCD_FILE.exists():
+def wave(tb_name=None):
+	if tb_name:
+		vcd_name = f"{tb_name}.vcd"
+	else:
+		vcd_name = "wave.vcd"
+	
+	vcd_file = BUILD_DIR / vcd_name
+
+	if not vcd_file.exists():
 		sim()
-	if not VCD_FILE.exists():
-		print(f"{sys.argv[0]}: simulation doesnt output {VCD_FILE}")
+	if not vcd_file.exists():
+		print(f"{sys.argv[0]}: simulation doesnt output {vcd_file}")
 		sys.exit(1)
-	run_cmd(["gtkwave", str(VCD_FILE)])
+	run_cmd(["gtkwave", str(vcd_file)])
 
 def synth():
 	build_dir()
@@ -80,33 +86,34 @@ def gui():
 	])
 
 TARGETS = {
-	"sim": sim,
-	"wave": wave,
-	"synth": synth,
-	"gui": gui,
+	"--sim": sim,
+	"--wave": wave,
+	"--synth": synth,
+	"--gui": gui,
 }
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
-		print(f"Usage: {sys.argv[0]} (sim|wave|synth|gui)... [-e path/to/environment_file]")
+		print(f"Usage: {sys.argv[0]} [--sim] [--wave [tb_name]] [--synth] [--gui]")
 		sys.exit(1)
 
 	args = sys.argv[1:]
-	targets = []
 	i = 0
 
 	while i < len(args):
-		arg = args[i]
-		target = arg.lower()
-		if target not in TARGETS:
-			print(f"{sys.argv[0]}: unknown target '{arg}'")
+		arg = args[i].lower()
+		
+		if arg not in TARGETS:
+			print(f"{sys.argv[0]}: unknown target '{args[i]}'")
 			sys.exit(1)
-		targets.append(target)
+
+		if arg == "--wave":
+			tb_name = None
+			if i + 1 < len(args) and not args[i + 1].startswith("--"):
+				tb_name = args[i + 1]
+				i += 1
+			wave(tb_name)
+		else:
+			TARGETS[arg]()
+
 		i += 1
-
-	if not targets:
-		print(f"{sys.argv[0]}: no targets specified")
-		sys.exit(1)
-
-	for target in targets:
-		TARGETS[target]()
