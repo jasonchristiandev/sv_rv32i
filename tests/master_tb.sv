@@ -23,13 +23,13 @@ module master_tb;
         $dumpfile("build/wave.vcd");
         $dumpvars(0, master_tb);
 
-        #10 alu_tb_enable = 1;
+        #10 cur_tb++;
+        alu_tb_enable = 1;
         wait (alu_tb_finish == 1);
-        cur_tb++;
 
-        #10 rv32i_tb_enable = 1;
+        #10 cur_tb++;
+        rv32i_tb_enable = 1;
         wait (rv32i_tb_finish == 1);
-        cur_tb++;
 
         #10 $finish();
 
