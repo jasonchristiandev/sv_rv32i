@@ -31,7 +31,7 @@ module master_tb;
         rv32i_tb_enable = 1;
         wait (rv32i_tb_finish == 1);
 
-        #10 $finish();
+        $finish();
 
     end
 
