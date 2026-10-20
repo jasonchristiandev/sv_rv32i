@@ -1,9 +1,6 @@
 `timescale 1ns / 1ps
 
-module rv32i_tb (
-    input  bit enable,
-    output bit finish
-);
+module rv32i_tb;
 
     reg clk;
     reg rst_n;
@@ -17,10 +14,9 @@ module rv32i_tb (
 
     initial begin
 
-        finish = 0;
-        wait (enable == 1);
-
         $display("[RV32I_TB] Testbench start");
+        $dumpfile("build/wave.vcd");
+        $dumpvars(0, rv32i_tb);
 
         clk   = 0;
         rst_n = 0;
@@ -28,7 +24,7 @@ module rv32i_tb (
         #10 rst_n = 1;
 
         #10 $display("[RV32I_TB] Testbench end");
-        finish = 1;
+        $finish;
 
     end
 
