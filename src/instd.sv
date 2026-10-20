@@ -1,6 +1,6 @@
 `include "alu.svh"
 
-module inst_decoder (
+module instd (
     input logic [31:0] inst,
     output logic exception,
     output alu_op_t alu_op,
