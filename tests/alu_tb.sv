@@ -1,10 +1,7 @@
 `include "alu.svh"
 `timescale 1ns / 1ps
 
-module alu_tb (
-    input  bit enable,
-    output bit finish
-);
+module alu_tb;
 
     reg [31:0] a;
     reg [31:0] b;
@@ -35,10 +32,9 @@ module alu_tb (
 
     initial begin
 
-        finish = 0;
-        wait (enable == 1);
-
         $display("[ALU_TB] Testbench start");
+        $dumpfile("build/wave.vcd");
+        $dumpvars(0, alu_tb);
 
         // ADD / SUB
         #10 check(32'd15, 32'd25, ADD, 32'd40, 0);
@@ -67,7 +63,7 @@ module alu_tb (
 
         #10 $display("[ALU_TB] %0d / %0d tests failed", errors, tests);
         $display("[ALU_TB] Testbench end");
-        finish = 1;
+        $finish;
 
     end
 

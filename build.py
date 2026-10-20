@@ -1,5 +1,4 @@
 import glob
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -25,18 +24,16 @@ def run_cmd(cmd):
 		print(f"{sys.argv[0]} command failed with exit code {res.returncode}")
 		sys.exit(res.returncode)
 
-def sim():
+def sim(tb_name):
 	build_dir()
-	run_cmd(["iverilog", "-g2012", "-s", "master_tb", "-I", "./include", "-o", str(SIM_BIN)] + glob.glob(SRCS) + glob.glob(TESTS))
+	run_cmd(["iverilog", "-g2012", "-s", tb_name, "-I", "./include", "-o", str(SIM_BIN)] + glob.glob(SRCS) + glob.glob(TESTS))
 	run_cmd(["vvp", str(SIM_BIN)])
 
 def wave():
 	vcd_file = BUILD_DIR / "wave.vcd"
 
 	if not vcd_file.exists():
-		sim()
-	if not vcd_file.exists():
-		print(f"{sys.argv[0]}: simulation doesnt output {vcd_file}")
+		print(f"{sys.argv[0]}: {vcd_file} not found")
 		sys.exit(1)
 	run_cmd(["gtkwave", str(vcd_file)])
 
@@ -81,7 +78,6 @@ def gui():
 	])
 
 TARGETS = {
-	"--sim": sim,
 	"--wave": wave,
 	"--synth": synth,
 	"--gui": gui,
@@ -89,19 +85,28 @@ TARGETS = {
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2:
-		print(f"Usage: {sys.argv[0]} [--sim] [--wave [tb_name]] [--synth] [--gui]")
+		print(f"Usage: {sys.argv[0]} [--sim=TB_NAME] [--wave] [--synth] [--gui]")
 		sys.exit(1)
 
 	args = sys.argv[1:]
+	print(args);
 	i = 0
 
 	while i < len(args):
 		arg = args[i].lower()
 		
-		if arg not in TARGETS:
-			print(f"{sys.argv[0]}: unknown target '{args[i]}'")
-			sys.exit(1)
+		if arg.startswith("--sim"):
+			if not arg.startswith("--sim="):
+				print(f"{sys.argv[0]}: '--sim' requires argument")
+				print(f"Usage: {sys.argv[0]} [--sim=TB_NAME] [--wave] [--synth] [--gui]")
+				sys.exit(1)
+			sim(arg[6:])
+		else:
+			if arg not in TARGETS:
+				print(f"{sys.argv[0]}: unknown target '{args[i]}'")
+				print(f"Usage: {sys.argv[0]} [--sim=TB_NAME] [--wave] [--synth] [--gui]")
+				sys.exit(1)
 
-		TARGETS[arg]()
+			TARGETS[arg]()
 
 		i += 1
