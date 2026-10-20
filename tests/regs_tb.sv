@@ -1,9 +1,6 @@
 `timescale 1ns / 1ps
 
-module regs_tb (
-    input  bit enable,
-    output bit finish
-);
+module regs_tb;
 
     logic clk;
     logic rst_n;
@@ -49,9 +46,6 @@ module regs_tb (
 
     initial begin
 
-        finish = 0;
-        wait (enable == 1);
-
         $display("[REGS_TB] Testbench start");
 
         clk = 0;
@@ -79,7 +73,7 @@ module regs_tb (
 
         #10 $display("[REGS_TB] %0d / %0d tests failed", errors, tests);
         $display("[REGS_TB] Testbench end");
-        finish = 1;
+        $finish;
 
     end
 
