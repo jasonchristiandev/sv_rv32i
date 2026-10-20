@@ -89,7 +89,6 @@ if __name__ == "__main__":
 		sys.exit(1)
 
 	args = sys.argv[1:]
-	print(args);
 	i = 0
 
 	while i < len(args):
@@ -99,6 +98,14 @@ if __name__ == "__main__":
 			if not arg.startswith("--sim="):
 				print(f"{sys.argv[0]}: '--sim' requires argument")
 				print(f"Usage: {sys.argv[0]} [--sim=TB_NAME] [--wave] [--synth] [--gui]")
+				sys.exit(1)
+			path = Path("tests") / (arg[6:] + ".sv")
+			if not path.is_file():
+				print(f"{sys.argv[0]}: testbench '{arg[6:]}' does not exist (searched {path})")
+				print(f"Available tests:")
+				for f in Path("tests").iterdir():
+					if f.is_file() and f.name.endswith(".sv"):
+						print(f"  - {f.name[:-3]}")
 				sys.exit(1)
 			sim(arg[6:])
 		else:
