@@ -47,6 +47,8 @@ module regs_tb;
     initial begin
 
         $display("[REGS_TB] Testbench start");
+        $dumpfile("build/wave.vcd");
+        $dumpvars(0, regs_tb);
 
         clk = 0;
         rst_n = 0;

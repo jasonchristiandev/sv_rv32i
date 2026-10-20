@@ -12,7 +12,7 @@ module regs (
     output logic signed [31:0] rs2v
 );
 
-    logic signed [31:0] xi[31:0];
+    logic signed [31:0] xi[32];
 
     assign rs1v = (rs1 == 0) ? 0 : xi[rs1];
     assign rs2v = (rs2 == 0) ? 0 : xi[rs2];
