@@ -31,7 +31,7 @@ module instd (
             7'b0110011: begin  // R
                 case (funct3)
                     3'h0: begin
-                        alu_op = funct7 == 7'h20 ? SUB : ADD;
+                        alu_op = alu_op_t'((funct7 == 7'h20) ? SUB : ADD);
                         exception = funct7 != 7'h00 && funct7 != 7'h20;
                     end
                     3'h4: begin
@@ -51,7 +51,7 @@ module instd (
                         exception = funct7 != 7'h00;
                     end
                     3'h5: begin
-                        alu_op = funct7 == 7'h20 ? SRA : SRL;
+                        alu_op = alu_op_t'((funct7 == 7'h20) ? SRA : SRL);
                         exception = funct7 != 7'h00 && funct7 != 7'h20;
                     end
                     3'h2: begin
@@ -77,7 +77,7 @@ module instd (
                         exception = funct7 != 7'h00;
                     end
                     3'h5: begin
-                        alu_op = funct7 == 7'h20 ? SRA : SRL;
+                        alu_op = alu_op_t'((funct7 == 7'h20) ? SRA : SRL);
                         exception = funct7 != 7'h00 && funct7 != 7'h20;
                     end
                     3'h2: alu_op = SLT;
