@@ -19,50 +19,51 @@ module alu_tb;
         a = in_a;
         b = in_b;
         alu_op = op;
-        #1;
+        #10;
         tests++;
 
+        $write("[ALU_TB] ");
         if (c !== expected_c || exception !== expected_ex) begin
-            $display(
-                "[ALU_TB] %0d: op=%s, a=0x%0h, b=0x%0h | Expected: c=0x%0h ex=%0b | Got: c=0x%0h ex=%0b",
-                tests, op.name(), in_a, in_b, expected_c, expected_ex, c, exception);
+            $write("FAIL");
             errors++;
+        end else begin
+            $write("OK");
         end
+        $display(" %0d: op=%s, a=0x%0h, b=0x%0h | Expected: c=0x%0h ex=%0b | Got: c=0x%0h ex=%0b",
+                 tests, op.name(), in_a, in_b, expected_c, expected_ex, c, exception);
     endtask
 
     initial begin
 
-        $display("[ALU_TB] Testbench start");
         $dumpfile("build/wave.vcd");
         $dumpvars(0, alu_tb);
 
         // ADD / SUB
-        #10 check(32'd15, 32'd25, ADD, 32'd40, 0);
-        #10 check(32'd100, 32'd40, SUB, 32'd60, 0);
-        #10 check(32'd10, 32'd20, SUB, 32'hFFFFFFF6, 0);
+        check(32'd15, 32'd25, ADD, 32'd40, 0);
+        check(32'd100, 32'd40, SUB, 32'd60, 0);
+        check(32'd10, 32'd20, SUB, 32'hFFFFFFF6, 0);
 
         // logical
-        #10 check(32'hFF001234, 32'h00FF5678, XOR, 32'hFFFF444C, 0);
-        #10 check(32'hF0F01111, 32'h0F0F2222, OR, 32'hFFFF3333, 0);
-        #10 check(32'hFF00FFFF, 32'h00FF1234, AND, 32'h00001234, 0);
+        check(32'hFF001234, 32'h00FF5678, XOR, 32'hFFFF444C, 0);
+        check(32'hF0F01111, 32'h0F0F2222, OR, 32'hFFFF3333, 0);
+        check(32'hFF00FFFF, 32'h00FF1234, AND, 32'h00001234, 0);
 
         // shifts
-        #10 check(32'h00000001, 32'd4, SLL, 32'h00000010, 0);
-        #10 check(32'h80000000, 32'd4, SRL, 32'h08000000, 0);
-        #10 check(32'h80000000, 32'd4, SRA, 32'hF8000000, 0);
-        #10 check(32'h00000001, 32'h24, SLL, 32'h00000010, 0);
+        check(32'h00000001, 32'd4, SLL, 32'h00000010, 0);
+        check(32'h80000000, 32'd4, SRL, 32'h08000000, 0);
+        check(32'h80000000, 32'd4, SRA, 32'hF8000000, 0);
+        check(32'h00000001, 32'h24, SLL, 32'h00000010, 0);
 
         // comps
-        #10 check(-32'sd10, 32'sd5, SLT, 32'd1, 0);
-        #10 check(-32'sd10, 32'sd5, SLTU, 32'd0, 0);
-        #10 check(32'd5, 32'd10, SLT, 32'd1, 0);
-        #10 check(32'd10, 32'd5, SLT, 32'd0, 0);
+        check(-32'sd10, 32'sd5, SLT, 32'd1, 0);
+        check(-32'sd10, 32'sd5, SLTU, 32'd0, 0);
+        check(32'd5, 32'd10, SLT, 32'd1, 0);
+        check(32'd10, 32'd5, SLT, 32'd0, 0);
 
         // illegal opcode
-        #10 check(32'd10, 32'd20, alu_op_t'(5'd31), 32'd0, 1);
+        check(32'd10, 32'd20, alu_op_t'(5'd31), 32'd0, 1);
 
-        #10 $display("[ALU_TB] %0d / %0d tests failed", errors, tests);
-        $display("[ALU_TB] Testbench end");
+        $display("[ALU_TB] %0d / %0d tests failed", errors, tests);
         $finish;
 
     end
