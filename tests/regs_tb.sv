@@ -36,17 +36,20 @@ module regs_tb;
         rs2 = r2;
         #10;
         tests++;
+        $write("[REGS_TB] ");
         if (rs1v != exp1 || rs2v != exp2) begin
-            $display(
-                "[REGS_TB] %0d: r1=%0d, r2=%0d | Expected: rs1v=0x%0h rs2v=0x%0h | Got: rs1v=0x%0h rs2v=0x%0h",
-                tests, r1, r2, exp1, exp2, rs1v, rs2v);
+            $write("FAIL");
             errors++;
+        end else begin
+            $write("OK");
         end
+        $display(
+            " %0d: r1=%0d, r2=%0d | Expected: rs1v=0x%0h rs2v=0x%0h | Got: rs1v=0x%0h rs2v=0x%0h",
+            tests, r1, r2, exp1, exp2, rs1v, rs2v);
     endtask
 
     initial begin
 
-        $display("[REGS_TB] Testbench start");
         $dumpfile("build/wave.vcd");
         $dumpvars(0, regs_tb);
 
@@ -73,8 +76,7 @@ module regs_tb;
         write_reg(5'd5, -32'sd50);
         check_read(1, 5, 32'h12345678, -32'sd50);
 
-        #10 $display("[REGS_TB] %0d / %0d tests failed", errors, tests);
-        $display("[REGS_TB] Testbench end");
+        $display("[REGS_TB] %0d / %0d tests failed", errors, tests);
         $finish;
 
     end

@@ -6,12 +6,6 @@ repos:
         entry: verible-verilog-format --inplace --flagfile .verible-style
         language: system
         files: \.(v|vh|sv|svh)$
-      - id: python-build
-        name: python-build
-        entry: python build.py sim
-        language: system
-        pass_filenames: false
-        always_run: true
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.2.0
     hooks:

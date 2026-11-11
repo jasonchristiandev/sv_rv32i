@@ -28,6 +28,7 @@ def sim(tb_name):
 	build_dir()
 	run_cmd(["iverilog", "-g2012", "-s", tb_name, "-I", "./include", "-o", str(SIM_BIN)] + glob.glob(SRCS) + glob.glob(TESTS))
 	run_cmd(["vvp", str(SIM_BIN)])
+	print()
 
 def wave():
 	vcd_file = BUILD_DIR / "wave.vcd"
@@ -36,6 +37,7 @@ def wave():
 		print(f"{sys.argv[0]}: {vcd_file} not found")
 		sys.exit(1)
 	run_cmd(["gtkwave", str(vcd_file)])
+	print()
 
 def synth():
 	build_dir()
@@ -64,10 +66,12 @@ def synth():
 		"--write", str(ROUTED_JSON)
 	]
 	run_cmd(pnr_cmd)
+	print()
 
 def gui():
 	if not ROUTED_JSON.exists():
-		synth()
+		print(f"{sys.argv[0]}: {ROUTED_JSON} not found (try running --synth first?)")
+		sys.exit(1)
 	run_cmd([
 		"nextpnr-ice40",
 		"--hx8k",
@@ -76,6 +80,7 @@ def gui():
 		"--json", str(ROUTED_JSON),
 		"--gui"
 	])
+	print()
 
 TARGETS = {
 	"--wave": wave,
@@ -93,21 +98,27 @@ if __name__ == "__main__":
 
 	while i < len(args):
 		arg = args[i].lower()
-		
+
 		if arg.startswith("--sim"):
 			if not arg.startswith("--sim="):
 				print(f"{sys.argv[0]}: '--sim' requires argument")
 				print(f"Usage: {sys.argv[0]} [--sim=TB_NAME] [--wave] [--synth] [--gui]")
 				sys.exit(1)
 			path = Path("tests") / (arg[6:] + ".sv")
-			if not path.is_file():
+			if not path.is_file() and arg[6:] != "all":
 				print(f"{sys.argv[0]}: testbench '{arg[6:]}' does not exist (searched {path})")
 				print(f"Available tests:")
+				print("  - all")
 				for f in Path("tests").iterdir():
 					if f.is_file() and f.name.endswith(".sv"):
 						print(f"  - {f.name[:-3]}")
 				sys.exit(1)
-			sim(arg[6:])
+			if arg[6:] == "all":
+				for f in Path("tests").iterdir():
+					if f.is_file() and f.name.endswith(".sv"):
+						sim(f.name[:-3])
+			else:
+				sim(arg[6:])
 		else:
 			if arg not in TARGETS:
 				print(f"{sys.argv[0]}: unknown target '{args[i]}'")
