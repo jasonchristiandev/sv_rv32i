@@ -11,8 +11,8 @@ typedef enum logic [4:0] {
     SRL  = 5'd6,
     SRA  = 5'd7,
     SLT  = 5'd8,
-    SLTU = 5'd9
+    SLTU = 5'd9,
+    EQU  = 5'd10
 } alu_op_t;
 
 `endif
-

@@ -12,16 +12,17 @@ module alu (
     always_comb begin
         exception = 0;
         case (alu_op)
-            ADD: c = a + b;
-            SUB: c = a - b;
-            XOR: c = a ^ b;
-            OR: c = a | b;
-            AND: c = a & b;
-            SLL: c = a << b[4:0];
-            SRL: c = a >> b[4:0];
-            SRA: c = unsigned'(signed'(a) >>> b[4:0]);
-            SLT: c = 32'(signed'(a) < signed'(b));
+            ADD:  c = a + b;
+            SUB:  c = a - b;
+            XOR:  c = a ^ b;
+            OR:   c = a | b;
+            AND:  c = a & b;
+            SLL:  c = a << b[4:0];
+            SRL:  c = a >> b[4:0];
+            SRA:  c = unsigned'(signed'(a) >>> b[4:0]);
+            SLT:  c = 32'(signed'(a) < signed'(b));
             SLTU: c = 32'(a < b);
+            EQU:  c = 32'(a == b);
             default: begin
                 c = 0;
                 exception = 1;
